@@ -1,0 +1,5 @@
+{
+  "quotemark": "single",
+  "semicolon": true,
+  "use-strict": "check-module"
+}
