@@ -1,7 +1,7 @@
 'use strict';
 
 import htmlparser2 = require('htmlparser2');
-import fetch = require('node-fetch');
+import rp = require('request-promise');
 import xl = require('excel4node');
 import fs = require('fs');
 
@@ -52,26 +52,26 @@ function counter(key) {
 };
 
 function logError(msg, err) {
-  // console.error(msg, err);
+  console.error(msg, err);
 }
 
 function generateIDs() {
-  const result = new Array(1200 + 1);
+  const result = new Array(1200 + 12);
   storage.total = result.length;
   for (let i = 0; i < 1200; ++i) result[i] = i + 1;
-  result[1200] = 3001;
+  for (let i = 1200; i < 1212; ++i) result[i] = i - 1200 + 3000 + 1;
   return result;
 }
 
 const titles = [
-  'ID', '名称', '稀有度', '属性', '类型', '念力值', 'MinHP', 'MaxHP', 'MinATK',
+  'ID', '名称', '稀有度', '属性', '类型', '念力值', 'MinHP', 'MaxHP', 'MinATK', 'MaxATK',
   'MinHeal', 'MaxHeal', 'MaxLV', '技能名称', '技能说明', '技能初始回合数',
   '技能Max时回合数', '技能最大lv', '队长技能', '队长技能说明', '大插图', '小插图'
 ];
 
 Promise.all(generateIDs()
-  .map(ID => fetch(`${domain}/index.php?r=cards%2Fdetail&roleid=${ID}`)
-    .then(result => result.text())
+  .map((ID, _) => new Promise(resolve => setTimeout(resolve, _ * 100))
+    .then(() => rp(`${domain}/index.php?r=cards%2Fdetail&roleid=${ID}`, { gzip: true }))
     .catch(err => {
       errors.unexpectedError.push(ID);
       throw err;
@@ -107,6 +107,7 @@ Promise.all(generateIDs()
       getValueByAttributeName(box, 'MinHP').children[0].data | 0,
       getValueByAttributeName(box, 'MaxHP').children[0].data | 0,
       getValueByAttributeName(box, 'MinATK').children[0].data | 0,
+      getValueByAttributeName(box, 'MaxATK').children[0].data | 0,
       getValueByAttributeName(box, 'MinHeal').children[0].data | 0,
       getValueByAttributeName(box, 'MaxHeal').children[0].data | 0,
       getValueByAttributeName(box, 'MaxLV').children[0].data | 0,
@@ -124,6 +125,11 @@ Promise.all(generateIDs()
       counter('parsed');
       return result;
     })
+    // .then(result => rp(result[20], { encoding: null })
+    //   .then(buffer =>
+    //     new Promise<any[]>(resolve => fs.writeFile(result[20].match(/[^\/]+$/)[0], buffer, () => resolve(result)))
+    //   )
+    // )
     .catch(err => logError(`获取念灵 ${ID} 信息失败`, err))
   )
 )
@@ -146,6 +152,7 @@ Promise.all(generateIDs()
   titles.forEach((title, columnIndex) => worksheet.Cell(1, columnIndex + 1).String(title));
 
   result.forEach((row, rowIndex) => {
+    // worksheet.Image('').Position(rowIndex, titles.length + 1);
     row.forEach((cell, columnIndex) => {
       const workCell = worksheet.Cell(rowIndex + 2, columnIndex + 1);
 
@@ -190,7 +197,6 @@ Promise.all(generateIDs()
 
   worksheet.Row(1).Filter(1, titles.length - 2);
   worksheet.Row(2).Freeze();
-  worksheet.Column(2).Freeze();
 
   workbook.write('killing-city.xlsx');
 })

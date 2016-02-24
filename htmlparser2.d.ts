@@ -13,14 +13,3 @@ declare module 'htmlparser2' {
     constructor(handler: DomHandler);
   }
 }
-
-declare module 'DomUtils' {
-
-  class inner {
-    find(test: (node: any) => void, elems: Array<any>): void
-  }
-
-  var exports: inner;
-
-  export = exports;
-}

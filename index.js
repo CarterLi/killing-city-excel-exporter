@@ -1,6 +1,6 @@
 'use strict';
 const htmlparser2 = require('htmlparser2');
-const fetch = require('node-fetch');
+const rp = require('request-promise');
 const xl = require('excel4node');
 const domain = 'http://xmdswiki.opd2c.com';
 const storage = {
@@ -42,23 +42,25 @@ function counter(key) {
 }
 ;
 function logError(msg, err) {
+    console.error(msg, err);
 }
 function generateIDs() {
-    const result = new Array(1200 + 1);
+    const result = new Array(1200 + 12);
     storage.total = result.length;
     for (let i = 0; i < 1200; ++i)
         result[i] = i + 1;
-    result[1200] = 3001;
+    for (let i = 1200; i < 1212; ++i)
+        result[i] = i - 1200 + 3000 + 1;
     return result;
 }
 const titles = [
-    'ID', '名称', '稀有度', '属性', '类型', '念力值', 'MinHP', 'MaxHP', 'MinATK',
+    'ID', '名称', '稀有度', '属性', '类型', '念力值', 'MinHP', 'MaxHP', 'MinATK', 'MaxATK',
     'MinHeal', 'MaxHeal', 'MaxLV', '技能名称', '技能说明', '技能初始回合数',
     '技能Max时回合数', '技能最大lv', '队长技能', '队长技能说明', '大插图', '小插图'
 ];
 Promise.all(generateIDs()
-    .map(ID => fetch(`${domain}/index.php?r=cards%2Fdetail&roleid=${ID}`)
-    .then(result => result.text())
+    .map((ID, _) => new Promise(resolve => setTimeout(resolve, _ * 100))
+    .then(() => rp(`${domain}/index.php?r=cards%2Fdetail&roleid=${ID}`, { gzip: true }))
     .catch(err => {
     errors.unexpectedError.push(ID);
     throw err;
@@ -94,6 +96,7 @@ Promise.all(generateIDs()
     getValueByAttributeName(box, 'MinHP').children[0].data | 0,
     getValueByAttributeName(box, 'MaxHP').children[0].data | 0,
     getValueByAttributeName(box, 'MinATK').children[0].data | 0,
+    getValueByAttributeName(box, 'MaxATK').children[0].data | 0,
     getValueByAttributeName(box, 'MinHeal').children[0].data | 0,
     getValueByAttributeName(box, 'MaxHeal').children[0].data | 0,
     getValueByAttributeName(box, 'MaxLV').children[0].data | 0,
@@ -167,7 +170,6 @@ Promise.all(generateIDs()
     });
     worksheet.Row(1).Filter(1, titles.length - 2);
     worksheet.Row(2).Freeze();
-    worksheet.Column(2).Freeze();
     workbook.write('killing-city.xlsx');
 })
     .then(() => console.log('\nkilling-city.xlsx：文件成功生成'))

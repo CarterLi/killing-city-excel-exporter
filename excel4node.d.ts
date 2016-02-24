@@ -112,6 +112,8 @@ declare module 'excel4node' {
 
     Column(index: number): IColumn;
     Row(index: number): IRow;
+
+    Image: IImage;
   }
 
   export interface IFreezable {
@@ -186,5 +188,17 @@ declare module 'excel4node' {
       left: { style: string; color?: string; },
       right: { style: string; color?: string; }
     )
+  }
+
+  export interface IImage {
+    (path: string, type?: string): IImage;
+
+    ABSOLUTE: string;
+    ONE_CELL: string;
+    TWO_CELL: string;
+    Position(yPixels: number, xPixels: number): this;
+    Position(row: number, column: number, offsetY?: number, offsetX?: number): this;
+    Position(beginRow: number, beginColumn: number, endRow: number, endColumn: number, offsetY?: number, offsetX?: number): this;
+    Size(width: number, height: number);
   }
 }
