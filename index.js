@@ -2,6 +2,7 @@
 const htmlparser2 = require('htmlparser2');
 const rp = require('request-promise');
 const xl = require('excel4node');
+const fs = require('fs');
 const domain = 'http://xmdswiki.opd2c.com';
 const storage = {
     total: undefined,
@@ -113,6 +114,16 @@ Promise.all(generateIDs()
     .then(result => {
     counter('parsed');
     return result;
+})
+    .then(result => {
+    const imagePath = `images/big${padLeft(String(ID), '0', 4)}.png`;
+    if (!fs.existsSync(imagePath)) {
+        return rp(result[22], { encoding: null })
+            .then(buffer => new Promise(resolve => fs.writeFile(imagePath, buffer, () => resolve(result))));
+    }
+    else {
+        return result;
+    }
 })
     .catch(err => logError(`获取念灵 ${ID} 信息失败`, err))))
     .then(result => result.filter(record => record != null))

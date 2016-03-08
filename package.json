@@ -25,5 +25,9 @@
     "excel4node": "^0.4.0",
     "htmlparser2": "^3.9.0",
     "request-promise": "^2.0.0"
+  },
+  "devDependencies": {
+    "tslint": "^3.5.0",
+    "typescript": "^1.8.7"
   }
 }

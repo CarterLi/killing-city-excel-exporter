@@ -125,11 +125,17 @@ Promise.all(generateIDs()
       counter('parsed');
       return result;
     })
-    // .then(result => rp(result[20], { encoding: null })
-    //   .then(buffer =>
-    //     new Promise<any[]>(resolve => fs.writeFile(result[20].match(/[^\/]+$/)[0], buffer, () => resolve(result)))
-    //   )
-    // )
+    .then(result => {
+      const imagePath = `images/big${padLeft(String(ID), '0', 4)}.png`;
+      if (!fs.existsSync(imagePath)) {
+        return rp(result[22], { encoding: null })
+          .then(buffer =>
+            new Promise<any[]>(resolve => fs.writeFile(imagePath, buffer, () => resolve(result)))
+          )
+      } else {
+        return result;
+      }
+    })
     .catch(err => logError(`获取念灵 ${ID} 信息失败`, err))
   )
 )
@@ -150,9 +156,7 @@ Promise.all(generateIDs()
   const worksheet = workbook.WorkSheet('念灵图鉴');
 
   titles.forEach((title, columnIndex) => worksheet.Cell(1, columnIndex + 1).String(title));
-
   result.forEach((row, rowIndex) => {
-    // worksheet.Image('').Position(rowIndex, titles.length + 1);
     row.forEach((cell, columnIndex) => {
       const workCell = worksheet.Cell(rowIndex + 2, columnIndex + 1);
 
