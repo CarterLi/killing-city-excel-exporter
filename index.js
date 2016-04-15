@@ -141,8 +141,8 @@ Promise.all(generateIDs()
     .then(result => result.filter(record => record != null))
     .then(result => {
     console.log(`\n\n成功获取到${result.length}条数据，失败${storage.total - storage.received}个，${storage.received - storage.parsed}个请求未返回数据。`);
-    console.log(`请求失败的念灵：[${errors.unexpectedError.sort().join(', ')}]`);
-    console.log(`返回数据为空的念灵（通常代表该ID念灵不存在）：[${errors.noContent.sort().join(', ')}]`);
+    console.log(`请求失败的念灵：[${errors.unexpectedError.sort((a, b) => a - b).join(', ')}]`);
+    console.log(`返回数据为空的念灵（通常代表该ID念灵不存在）：[${errors.noContent.sort((a, b) => a - b).join(', ')}]`);
     return result;
 })
     .then(result => {
