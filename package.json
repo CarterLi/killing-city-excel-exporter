@@ -24,6 +24,7 @@
     "domhandler": "^2.3.0",
     "excel4node": "^0.4.0",
     "htmlparser2": "^3.9.0",
+    "request": "^2.69.0",
     "request-promise": "^2.0.0"
   },
   "devDependencies": {

@@ -5,12 +5,6 @@
   "path": "typings",
   "bundle": "typings/tsd.d.ts",
   "installed": {
-    "request-promise/request-promise.d.ts": {
-      "commit": "e69fe60f2d6377ea4fae539493997b098f52cad1"
-    },
-    "bluebird/bluebird.d.ts": {
-      "commit": "e69fe60f2d6377ea4fae539493997b098f52cad1"
-    },
     "form-data/form-data.d.ts": {
       "commit": "e69fe60f2d6377ea4fae539493997b098f52cad1"
     },
@@ -25,6 +19,9 @@
     },
     "jszip/jszip.d.ts": {
       "commit": "e69fe60f2d6377ea4fae539493997b098f52cad1"
+    },
+    "promise/promise.d.ts": {
+      "commit": "9f0f926a12026287b5a4a229e5672c01e7549313"
     }
   }
 }

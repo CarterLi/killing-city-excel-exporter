@@ -1,6 +1,6 @@
 'use strict';
 const htmlparser2 = require('htmlparser2');
-const rp = require('request-promise');
+const request = require('request');
 const xl = require('excel4node');
 const fs = require('fs');
 const domain = 'http://xmdswiki.opd2c.com';
@@ -13,6 +13,18 @@ const errors = {
     unexpectedError: [],
     noContent: []
 };
+function rp(url, options) {
+    return new Promise(function resolver(resolve, reject) {
+        request(url, options, (error, response, body) => {
+            if (error || response.statusCode !== 200) {
+                reject(error);
+            }
+            else {
+                resolve(body);
+            }
+        });
+    });
+}
 function dfs(dom, condition) {
     let result;
     if (dom.some(node => {

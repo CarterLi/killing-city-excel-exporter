@@ -1,7 +1,7 @@
 'use strict';
 
 import htmlparser2 = require('htmlparser2');
-import rp = require('request-promise');
+import request = require('request');
 import xl = require('excel4node');
 import fs = require('fs');
 
@@ -15,6 +15,18 @@ const storage = {
 const errors = {
   unexpectedError: [],
   noContent: []
+}
+
+function rp(url: string, options?: request.CoreOptions) {
+  return new Promise<string>(function resolver(resolve, reject) {
+    request(url, options, (error, response, body) => {
+      if (error || response.statusCode !== 200) {
+        reject(error);
+      } else {
+        resolve(body);
+      }
+    })
+  });
 }
 
 function dfs(dom: any[], condition: (elem) => boolean): any {
