@@ -140,7 +140,7 @@ Promise.all(generateIDs()
     .then(result => {
       const imagePath = `images/big${padLeft(String(ID), '0', 4)}.png`;
       if (!fs.existsSync(imagePath)) {
-        return rp(result[22], { encoding: null })
+        return rp(result[result.length - 1], { encoding: null })
           .then(buffer =>
             new Promise<any[]>(resolve => fs.writeFile(imagePath, buffer, () => resolve(result)))
           )
