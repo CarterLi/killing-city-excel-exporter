@@ -68,10 +68,10 @@ function logError(msg, err) {
 }
 
 function generateIDs() {
-  const result = new Array(1200 + 12);
+  const result = new Array(1200 + 100);
   storage.total = result.length;
   for (let i = 0; i < 1200; ++i) result[i] = i + 1;
-  for (let i = 1200; i < 1212; ++i) result[i] = i - 1200 + 3000 + 1;
+  for (let i = 1200; i < 1300; ++i) result[i] = i - 1200 + 3000 + 1;
   return result;
 }
 
