@@ -4,7 +4,8 @@
   "description": "消灭都市图鉴Excel导出工具",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "build": "tsc index.ts -t ES2015 --lib es2015,dom --pretty --m commonjs --sourceMap"
   },
   "repository": {
     "type": "git",
@@ -20,12 +21,10 @@
   },
   "homepage": "https://github.com/CarterLi/killing-city-excel-exporter#readme",
   "dependencies": {
-    "command-line-args": "^2.1.4",
     "domhandler": "^2.3.0",
     "excel4node": "^0.4.0",
     "htmlparser2": "^3.9.0",
-    "request": "^2.69.0",
-    "request-promise": "^2.0.0"
+    "request": "^2.69.0"
   },
   "devDependencies": {
     "tslint": "^3.5.0",

@@ -1,3 +1,7 @@
+/// <reference path="typings/tsd.d.ts" />
+/// <reference path="excel4node.d.ts" />
+/// <reference path="htmlparser2.d.ts" />
+
 'use strict';
 
 import htmlparser2 = require('htmlparser2');
@@ -8,7 +12,7 @@ import fs = require('fs');
 const domain = 'http://xmdswiki.opd2c.com';
 
 const storage = {
-  total: undefined,
+  total: NaN,
   received: 0,
   parsed: 0
 };
@@ -58,12 +62,12 @@ function padLeft(str: string, char: string, len: number): string {
   return char.repeat(len - str.length) + str;
 }
 
-function counter(key) {
+function counter(key: string) {
   ++storage[key];
-  process.stdout.write(`Total: ${storage.total}; Received: ${storage.received}; Parsed: ${storage.parsed}; Percentage: ${(storage.received / storage.total * 100).toFixed(2)}%\u001b[0G`);
+  console.log(`Total: ${storage.total}; Received: ${storage.received}; Parsed: ${storage.parsed}; Percentage: ${(storage.received / storage.total * 100).toFixed(2)}%`);
 };
 
-function logError(msg, err) {
+function logError(msg: string, err: Error) {
   console.error(msg, err);
 }
 
@@ -81,8 +85,8 @@ const titles = [
   '技能Max时回合数', '技能最大lv', '队长技能', '队长技能说明', '大插图', '小插图'
 ];
 
-Promise.all(generateIDs()
-  .map((ID, _) => new Promise(resolve => setTimeout(resolve, _ * 100))
+Promise.all<any[]>(generateIDs()
+  .map((ID, _) => new Promise<void>(resolve => setTimeout(resolve, _ * 100))
     .then(() => rp(`${domain}/index.php?r=cards%2Fdetail&roleid=${ID}`, { gzip: true }))
     .catch(err => {
       errors.unexpectedError.push(ID);
@@ -137,7 +141,7 @@ Promise.all(generateIDs()
       counter('parsed');
       return result;
     })
-    .then(result => {
+    .then<any[]>(result => {
       const imagePath = `images/big${padLeft(String(ID), '0', 4)}.png`;
       if (!fs.existsSync(imagePath)) {
         return rp(result[result.length - 1], { encoding: null })

@@ -1,3 +1,6 @@
+/// <reference path="typings/tsd.d.ts" />
+/// <reference path="excel4node.d.ts" />
+/// <reference path="htmlparser2.d.ts" />
 'use strict';
 const htmlparser2 = require('htmlparser2');
 const request = require('request');
@@ -5,7 +8,7 @@ const xl = require('excel4node');
 const fs = require('fs');
 const domain = 'http://xmdswiki.opd2c.com';
 const storage = {
-    total: undefined,
+    total: NaN,
     received: 0,
     parsed: 0
 };
@@ -51,7 +54,7 @@ function padLeft(str, char, len) {
 }
 function counter(key) {
     ++storage[key];
-    process.stdout.write(`Total: ${storage.total}; Received: ${storage.received}; Parsed: ${storage.parsed}; Percentage: ${(storage.received / storage.total * 100).toFixed(2)}%\u001b[0G`);
+    console.log(`Total: ${storage.total}; Received: ${storage.received}; Parsed: ${storage.parsed}; Percentage: ${(storage.received / storage.total * 100).toFixed(2)}%`);
 }
 ;
 function logError(msg, err) {
@@ -157,6 +160,7 @@ Promise.all(generateIDs()
         row.forEach((cell, columnIndex) => {
             const workCell = worksheet.Cell(rowIndex + 2, columnIndex + 1);
             if (columnIndex >= titles.length - 2) {
+                // 图片链接
                 workCell.Link(cell);
             }
             else {
@@ -172,6 +176,7 @@ Promise.all(generateIDs()
                             workCell.Date(cell);
                             break;
                         }
+                    // Fall through
                     default:
                         workCell.String(String(cell));
                         break;
